@@ -5,13 +5,18 @@ class Baixa(Patio):
     def __init__(self):
         super().__init__()
 
+
+
+
     def alterar(self):
         self.janela.title("Veículos com baixa")
         self.janela.geometry("750x300+350+200")
         self.lb = Label(self.janela, text="Veiculos com pagamento finalizado")
         self.lb.grid(row=0, column=0, columnspan=2)
 
+
     def listaPago(self):
+
         self.lbpago = Label(self.janela, text="Pago")
         self.lbpago.grid(row=2, column=2)
 
@@ -22,6 +27,7 @@ class Baixa(Patio):
             self.listapago.insert(END, p)
 
     def listaTipo(self):
+
         self.lbtipo = Label(self.janela, text="Tipo")
         self.lbtipo.grid(row=2, column=3)
 
@@ -32,26 +38,28 @@ class Baixa(Patio):
             self.listatipo.insert(END, p)
 
     def listaVeiculo(self):
+
         self.lbplaca = Label(self.janela, text="Placa")
         self.lbplaca.grid(row=2, column=0)
 
         self.listaplaca = Listbox(self.janela)
         self.listaplaca.grid(row=3, column=0)
 
-        self.veiculos = self.banco.consulta_baixa_veiculoplaca()
-        for i in self.veiculos:
+        for i in self.banco.consulta_baixa_veiculoplaca():
             self.listaplaca.insert(END, i)
 
     def listaEntrada(self):
+
         self.lbentrada = Label(self.janela, text="Entrada")
         self.lbentrada.grid(row=2, column=1)
 
         self.listaentrada = Listbox(self.janela, width=30)
         self.listaentrada.grid(row=3, column=1)
-        self.entrada = self.banco.consulta_baixa_veiculoentrada()
-        for e in self.entrada:
+
+        for e in self.banco.consulta_baixa_veiculoentrada():
             self.listaentrada.insert(END, e)
     def listaNome(self):
+
         self.lbnome = Label(self.janela, text="Nome caixa")
         self.lbnome.grid(row=2, column=4)
 

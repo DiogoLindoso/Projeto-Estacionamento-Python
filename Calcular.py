@@ -2,10 +2,13 @@ from tkinter import *
 from tkinter import messagebox
 from DBManager import *
 from datetime import *
-from Login import *
 
 
 class Calcular(object):
+    __placa = ""
+    __entrada = ""
+    __permanencia = 0
+
     def __init__(self, usuario):
         self.janela = Tk()
         self.janela.title("Calcular Tarifa")
@@ -17,6 +20,7 @@ class Calcular(object):
         #Caixa de texto
         self.edplaca = Entry(self.janela, width=8, font="Courier 12")
         self.edplaca.grid(row=0, column=1)
+        self.edplaca.focus_force()
 
         #Rótulos
         self.lbentrada = Label(self.janela, text="Tempo de permanência 00:00", width=35, font="Courier 12")
@@ -31,7 +35,7 @@ class Calcular(object):
         self.lbnomecobrador = Label(self.janela, text="Cobrador: "+usuario, font="Courier 12", anchor="w")
         self.lbnomecobrador.grid(row=4, column=0)
         #Botões
-        btcalc = Button(self.janela, text="Calcular", command=self.guardaPlaca, font="Courier 12")
+        btcalc = Button(self.janela, text="Calcular", command=self.setPlaca, font="Courier 12")
         btcalc.grid(row=5, column=0)
 
         btvoltar = Button(self.janela, text="Voltar", command=self.voltar, font="Courier 12")
@@ -47,56 +51,41 @@ class Calcular(object):
     def voltar(self):
         self.janela.destroy()
         
-    def guardaPlaca(self):
-        self.placa = self.edplaca.get().upper()
-        if self.placa != "":
-            entrada = self.get_hora_entrada(self.placa)
-            permanencia_minutos = self.calcular_permanencia(entrada)
-            return self.calcular_tarifa(permanencia_minutos)
+    def setPlaca(self):
+        Calcular.__placa = self.edplaca.get().upper()
+        if Calcular.__placa != "":
 
-    def get_hora_entrada(self, placa):
+            #Variável __entrada recebe a string com a data e hora de entrada do veiculo
+            Calcular.__entrada = self.__get_hora_entrada(Calcular.__placa)
+
+            #Variável __permanencia recebe o tempo total de permanencia em minutos
+            Calcular.__permanencia = self.__setPermanencia(Calcular.__entrada)
+
+            # o método privado __calcular_tarifa recebe a permanencia total e retorna o valor da tarifa
+            print(Calcular.__placa)
+            print(Calcular.__entrada)
+            print(f'{Calcular.__permanencia} minutos')
+            tarifa = self.__calcular_tarifa(Calcular.__permanencia)
+            return tarifa
+
+    def __get_hora_entrada(self, placa):
         try:
             banco = DBManager()
-            self.entrada = banco.consulta_placa(placa)
-            datahoraentrada = datetime.strptime(self.entrada[0], '%Y-%m-%d %H:%M:%S.%f')
-            return datahoraentrada
+            entrada = banco.consulta_placa(placa)
+            Calcular.__entrada = datetime.strptime(entrada[0], '%Y-%m-%d %H:%M:%S.%f')
+            return Calcular.__entrada
 
-        except (TypeError):
+        except TypeError:
             messagebox.showinfo("Aviso", "Placa não consta no sistema")
             self.edplaca.delete(0, END)
+            self.edplaca.focus_force()
 
-    '''def relogio(self):
-
-        global hora
-        global pressionado
-        if hora != 0:
-            permanencia_minutos = self.calcular_permanencia(hora)
-            print(permanencia_minutos)
-            tarifa = self.calcular_tarifa(permanencia_minutos)
-            print(tarifa)
-            t = time
-            t.sleep(1)
-            self.lbentrada["text"] = "teste"
-            self.lbentrada.after(1000, self.relogio())
-            print("teste")
-
-        print(pressionado)'''
-
-    def calcular_permanencia(self, datahoraentrada):
-        #funcao retorna tempo de permanencia em minutos
-
-        #banco = DBManager()
-
-        #self.entrada = banco.consulta_placa(placa)
-
-        #datahoraentrada = datetime.strptime(self.entrada[0], '%Y-%m-%d %H:%M:%S.%f')
+    def __setPermanencia(self, datahoraentrada):
         try:
             permanencia = datetime.now()-datahoraentrada
-            #print("dia"+permanencia.day+"hora"+permanencia.hour+"minuto"+permanencia.minute+"segundo"+permanencia.second)
             diaria = False
             if permanencia.days == 0:
                 self.tempo = datetime.strptime(str(permanencia), '%H:%M:%S.%f')
-
             if permanencia.days == 1:
                 self.tempo = datetime.strptime(str(permanencia), '%d day, %H:%M:%S.%f')
                 diaria = True
@@ -104,12 +93,12 @@ class Calcular(object):
                 self.tempo = datetime.strptime(str(permanencia), '%d days, %H:%M:%S.%f')
                 diaria = True
             
-            self.lbinfo["text"] = "Veiculo placa:" + self.placa
+            self.lbinfo["text"] = "Veiculo placa:" + Calcular.__placa
             perm_text = "Permanência:" + str(permanencia.days) + "D - " + str(self.tempo.hour) + \
                                      "H:" + str(self.tempo.minute) + "M:" + str(self.tempo.second) + "S"
             self.lbentrada["text"] = perm_text
 
-            # self.edplaca.delete(0, END)
+
 
             if diaria:
                 totalminutos = ((self.tempo.day * 24) * 60) + (self.tempo.hour * 60) + self.tempo.minute
@@ -118,14 +107,12 @@ class Calcular(object):
                 totalminutos = (self.tempo.hour * 60) + self.tempo.minute
                 return totalminutos
 
-            #self.lbentrada.after(1000, self.relogio())
         except TypeError:
             pass
         except AttributeError:
             pass
 
-
-    def calcular_tarifa(self, totalminutos):
+    def __calcular_tarifa(self, totalminutos):
         # Recebe a permanencia em minutos e retorna o valor da tarifa
         # ate 3 horas = 8 reais para carro ou moto
         # passando de 3 horas 2 reais para cada hora adicional
@@ -162,7 +149,13 @@ class Calcular(object):
 
     def pagar(self):
         banco = DBManager()
+        # recupera a id do usuário do banco em forma de tupla
         id_usuario = banco.consulta_tabela_funcionarioid(self.usuario)
-        banco.pagar(self.placa, self.guardaPlaca(), id_usuario[0])
+        #registra no banco os dados do pagamento
+        banco.pagar(Calcular.__placa, self.setPlaca(), id_usuario[0])
+        #limpa a caixa de texto edplaca
+        self.edplaca.delete(0, END)
+        #mensagem de aviso para pagamento realizado
+        messagebox.showinfo("Aviso", "Pagamento registrado!")
 
 

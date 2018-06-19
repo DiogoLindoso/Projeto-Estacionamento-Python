@@ -6,12 +6,8 @@ class Patio(object):
     def __init__(self):
         self.janela = Tk()
 
-
-
-        self.btvoltar = Button(self.janela, text="Voltar", command=self.voltar)
-        self.btvoltar.grid(row=0, column=2)
-
         self.banco = DBManager()
+
         self.alterar()
         self.listaVeiculo()
         self.listaEntrada()
@@ -19,13 +15,8 @@ class Patio(object):
         self.listaTipo()
         self.listaNome()
 
-
-
-
-        # print tabela veiculos para comparação
-        #for b in self.banco.consulta_tabela_veiculo():
-         #   print(b)
-
+        self.btvoltar = Button(self.janela, text="Voltar", command=self.voltar)
+        self.btvoltar.grid(row=0, column=2)
 
         self.janela.mainloop()
 
@@ -37,10 +28,9 @@ class Patio(object):
 
     def alterar(self):
         self.janela.title("Listagem de Veiculos no patio")
-        self.janela.geometry("570x200+450+200")
-        self.janela["bg"] = "grey"
-        self.lb = Label(self.janela, text="Veiculos com pagamento em aberto")
-        self.lb.grid(row=0, column=0, columnspan=2)
+        self.janela.geometry("620x200+450+200")
+        lb = Label(self.janela, text="Veiculos com pagamento em aberto")
+        lb.grid(row=0, column=0, columnspan=2)
 
     def listaEntrada(self):
         self.lbentrada = Label(self.janela, text="Entrada")
@@ -48,8 +38,8 @@ class Patio(object):
 
         self.listaentrada = Listbox(self.janela, width=30)
         self.listaentrada.grid(row=3, column=1)
-        self.entrada = self.banco.consulta_tabela_veiculo_entrada()
-        for e in self.entrada:
+
+        for e in self.banco.consulta_tabela_veiculo_entrada():
             self.listaentrada.insert(END, e)
 
     def listaTipo(self):
@@ -58,8 +48,8 @@ class Patio(object):
 
         self.listatipo = Listbox(self.janela, width=30)
         self.listatipo.grid(row=3, column=3)
-        self.tipo = self.banco.consulta_tabela_veiculo_tipo()
-        for e in self.tipo:
+
+        for e in self.banco.consulta_tabela_veiculo_tipo():
             self.listatipo.insert(END, e)
 
     def listaPago(self):
@@ -79,6 +69,5 @@ class Patio(object):
         self.listaplaca = Listbox(self.janela)
         self.listaplaca.grid(row=3, column=0)
 
-        self.veiculos = self.banco.consulta_tabela_veiculo_placa()
-        for i in self.veiculos:
+        for i in self.banco.consulta_tabela_veiculo_placa():
             self.listaplaca.insert(END, i)
