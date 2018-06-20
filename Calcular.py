@@ -98,8 +98,6 @@ class Calcular(object):
                                      "H:" + str(self.tempo.minute) + "M:" + str(self.tempo.second) + "S"
             self.lbentrada["text"] = perm_text
 
-
-
             if diaria:
                 totalminutos = ((self.tempo.day * 24) * 60) + (self.tempo.hour * 60) + self.tempo.minute
                 return totalminutos

@@ -4,6 +4,7 @@ from Patio import *
 from Calcular import *
 from tkinter import *
 from Baixa import *
+from GerenciarCobrador import *
 
 
 class GUIMenuPrincipal(object):
@@ -15,6 +16,8 @@ class GUIMenuPrincipal(object):
         self.__janela.focus_force()
         btcadastro_cobrador = Button(self.__janela, text="Novo Cobrador", command=self.novo_cobrador, width=20, height=3)
         btcadastro_cobrador.grid(row=0, column=0)
+
+        Button(self.__janela, text="Lista de cobradores", command=self.gerenciar_cobrador, width=20, height=3).grid(row=0, column=1)
 
         btcadastro_veiculo = Button(self.__janela, text="Novo Veiculo", command=self.novo_veiculo, width=20, height=3)
         btcadastro_veiculo.grid(row=1, column=0)
@@ -31,6 +34,9 @@ class GUIMenuPrincipal(object):
 
     def novo_cobrador(self):
         CadastroCobrador()
+
+    def gerenciar_cobrador(self):
+        GerenciarCobrador()
 
     def novo_veiculo(self):
         EntradaVeiculo(self.__usuario)

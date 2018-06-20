@@ -52,8 +52,9 @@ class DBManager(object):
         self.__c.commit()
 
     def consulta_tabela(self):
-        for row in self.__c.execute('SELECT * FROM funcionario'):
-            print(row)
+        return self.__c.execute('SELECT * FROM funcionario').fetchall()
+        #for row in self.__c.execute('SELECT * FROM funcionario'):
+        #    print(row)
 
     def consulta_tabela_funcionarioid(self, nome):
         return self.__c.execute('SELECT id_funcionario FROM funcionario WHERE nome =?', (nome,)).fetchone()
@@ -102,6 +103,6 @@ class DBManager(object):
             return True
         return False
 
-    def apagar(self):
-        self.__c.execute("DELETE FROM veiculo WHERE pago=0")
+    def apagar(self, id):
+        self.__c.execute("DELETE FROM funcionario WHERE id_funcionario=?", (id,))
         self.__c.commit()

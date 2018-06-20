@@ -52,6 +52,7 @@ class CadastroCobrador(object):
         self.__edcpf.delete(0, END)
         self.__edsenha.delete(0, END)
         messagebox.showinfo("Aviso", "Usuário cadastrado com sucesso")
+        self.__lbnome.focus_force()
 
     def voltar(self):
         self.__janela.destroy()
