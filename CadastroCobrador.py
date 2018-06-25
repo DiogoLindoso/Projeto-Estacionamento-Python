@@ -56,4 +56,3 @@ class CadastroCobrador(object):
 
     def voltar(self):
         self.__janela.destroy()
-

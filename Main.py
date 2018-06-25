@@ -1,7 +1,4 @@
 from Login import *
-from Calcular import *
-from Baixa import *
-from Patio import *
 from DBManager import *
 
 #banco = DBManager()
@@ -9,4 +6,5 @@ from DBManager import *
 login = Login()
 banco = DBManager()
 banco.close()
+
 

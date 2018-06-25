@@ -4,54 +4,70 @@ from CadastroCobrador import *
 
 
 class GerenciarCobrador(object):
-    __b = DBManager()
 
     def __init__(self):
-        __janela = Tk()
-        __janela.title("Gerenciar Cobradores")
-        __janela.geometry("450x250+450+200")
+        self.__janela = Tk()
+        self.__janela.title("Gerenciar Cobradores")
+        self.__janela.geometry("450x250+450+200")
 
         #Rótulos
-        Label(__janela, text="ID").grid(row=0, column=0)
-        Label(__janela, text="Nome").grid(row=0, column=1)
-        Label(__janela, text="Turno").grid(row=0, column=2)
-        Label(__janela, text="CPF").grid(row=0, column=3)
+        __tupla_labels = ("ID", "Nome", "Turno", "CPF")
+        for pos, linha in enumerate(__tupla_labels):
+            Label(self.__janela, text=__tupla_labels[pos]).grid(row=0, column=pos)
 
+        # Listas
+        self.__ltid = Grid
+        self.__ltnome = Listbox()
+        self.__ltturno = Listbox()
+        self.__ltCPF = Listbox()
 
+        self.__lista_listbox = [self.__ltid, self.__ltnome, self.__ltturno, self.__ltCPF]
 
-        #Listas
-        self.__ltid = Listbox(__janela, width=8)
-        self.__ltid.grid(row=1, column=0)
-        self.__ltnome = Listbox(__janela)
-        self.__ltnome.grid(row=1, column=1)
-        self.__ltturno = Listbox(__janela)
-        self.__ltturno.grid(row=1, column=2)
-        self.__ltCPF = Listbox(__janela)
-        self.__ltCPF.grid(row=1, column=3)
+        for pos, linha in enumerate(self.__lista_listbox):
+            self.__lista_listbox[pos] = Listbox(self.__janela, width=15)
+            self.__lista_listbox[pos].grid(row=1, column=pos)
 
+        self.lista_insert()
+
+        self.btexcluir = Button()
+        self.btatualizar = Button()
+        self.btinserir = Button()
+
+        __botoes = [["Excluir", self.excluir, self.btexcluir],
+                    ["Atualizar", self.lista_update, self.btatualizar],
+                    ["Inserir", self.inserir, self.btinserir]]
         #Botões
-        Button(__janela, text="Excluir", command=self.excluir).grid(row=2, column=0)
-        Button(__janela, text="Editar").grid(row=2, column=1)
-        Button(__janela, text="Inserir", command=self.inserir).grid(row=2, column=2)
+        for pos, linha in enumerate(__botoes):
+            __botoes[pos][2] = Button(self.__janela, text=__botoes[pos][0], command=__botoes[pos][1])
+            __botoes[pos][2].grid(row=2, column=pos)
 
-        listabanco = GerenciarCobrador.__b.consulta_tabela()
+        self.lista_update()
+        self.__janela.mainloop()
 
-        print(listabanco)
-
+    def lista_insert(self):
+        banco = DBManager()
+        listabanco = banco.consulta_tabela()
         for pos, linha in enumerate(listabanco):
-            self.__ltid.insert(END, listabanco[pos][0])
-            self.__ltnome.insert(END, listabanco[pos][1])
-            self.__ltturno.insert(END, listabanco[pos][2])
-            self.__ltCPF.insert(END, listabanco[pos][4])
+            self.__lista_listbox[0].insert(END, listabanco[pos][0])
+            self.__lista_listbox[1].insert(END, listabanco[pos][1])
+            self.__lista_listbox[2].insert(END, listabanco[pos][2])
+            self.__lista_listbox[3].insert(END, listabanco[pos][4])
 
-        __janela.mainloop()
+    def lista_update(self):
+
+        self.__lista_listbox[0].delete(0, END)
+        self.__lista_listbox[1].delete(0, END)
+        self.__lista_listbox[2].delete(0, END)
+        self.__lista_listbox[3].delete(0, END)
+        self.lista_insert()
 
     def excluir(self):
-        selecao = self.__ltid.get(ACTIVE)
-        GerenciarCobrador.__b.apagar(selecao)
-        print(selecao)
+        selecao = self.__lista_listbox[0].get(ACTIVE)
+        banco = DBManager()
+        banco.apagar(selecao)
+        self.lista_update()
 
     def inserir(self):
-        inserir = CadastroCobrador()
-        inserir.cadastrar()
-#GerenciarCobrador()
+        cobrador = CadastroCobrador()
+        cobrador.voltar()
+        self.lista_update()
