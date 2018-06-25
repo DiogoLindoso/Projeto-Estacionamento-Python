@@ -68,6 +68,5 @@ class GerenciarCobrador(object):
         self.lista_update()
 
     def inserir(self):
-        cobrador = CadastroCobrador()
-        cobrador.voltar()
+        CadastroCobrador()
         self.lista_update()

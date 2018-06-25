@@ -8,15 +8,10 @@ class Patio(object):
 
         self.banco = DBManager()
 
-        self.alterar()
-        self.listaVeiculo()
-        self.listaEntrada()
-        self.listaPago()
-        self.listaTipo()
+        self.config()
         self.listaNome()
-
-        self.btvoltar = Button(self.janela, text="Voltar", command=self.voltar)
-        self.btvoltar.grid(row=0, column=2)
+        self.lista()
+        Button(self.janela, text="Voltar", command=self.voltar).grid(row=0, column=2)
 
         self.janela.mainloop()
 
@@ -26,48 +21,33 @@ class Patio(object):
     def listaNome(self):
         pass
 
-    def alterar(self):
+    def config(self):
         self.janela.title("Listagem de Veiculos no patio")
         self.janela.geometry("620x200+450+200")
         lb = Label(self.janela, text="Veiculos com pagamento em aberto")
         lb.grid(row=0, column=0, columnspan=2)
 
-    def listaEntrada(self):
-        self.lbentrada = Label(self.janela, text="Entrada")
-        self.lbentrada.grid(row=2, column=1)
+    def lista(self):
+        self.listaplaca = Listbox()
+        self.listaentrada = Listbox()
+        self.listapago = Listbox()
+        self.listatipo = Listbox()
 
-        self.listaentrada = Listbox(self.janela, width=30)
-        self.listaentrada.grid(row=3, column=1)
+        self.listas = [["Placa", self.listaplaca],
+                  ["Entrada", self.listaentrada],
+                  ["Pago", self.listapago],
+                  ["Tipo", self.listatipo]]
+        for p, linha in enumerate(self.listas):
+            Label(self.janela, text=self.listas[p][0]).grid(row=2, column=p)
+            linha[1] = Listbox(self.janela, width=25)
+            linha[1].grid(row=3, column=p)
+            self.lista_insert(p)
 
-        for e in self.banco.consulta_tabela_veiculo_entrada():
-            self.listaentrada.insert(END, e)
+    def lista_insert(self, pos):
+        query = [self.banco.consulta_tabela_veiculo_placa(),
+                 self.banco.consulta_tabela_veiculo_entrada(),
+                 self.banco.consulta_tabela_veiculo_pago(),
+                 self.banco.consulta_tabela_veiculo_tipo()]
+        for i in query[pos]:
+            self.listas[pos][1].insert(END, i)
 
-    def listaTipo(self):
-        self.lbtipo = Label(self.janela, text="Tipo")
-        self.lbtipo.grid(row=2, column=3)
-
-        self.listatipo = Listbox(self.janela, width=30)
-        self.listatipo.grid(row=3, column=3)
-
-        for e in self.banco.consulta_tabela_veiculo_tipo():
-            self.listatipo.insert(END, e)
-
-    def listaPago(self):
-        self.lbpago = Label(self.janela, text="Pago")
-        self.lbpago.grid(row=2, column=2)
-
-        self.listapago = Listbox(self.janela)
-        self.listapago.grid(row=3, column=2)
-
-        for p in self.banco.consulta_tabela_veiculo_pago():
-            self.listapago.insert(END, p)
-
-    def listaVeiculo(self):
-        self.lbplaca = Label(self.janela, text="Placa")
-        self.lbplaca.grid(row=2, column=0)
-
-        self.listaplaca = Listbox(self.janela)
-        self.listaplaca.grid(row=3, column=0)
-
-        for i in self.banco.consulta_tabela_veiculo_placa():
-            self.listaplaca.insert(END, i)
